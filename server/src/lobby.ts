@@ -14,7 +14,6 @@ type GameState = {
   players: Record<string, Player>,
   enemies: Record<number, Enemy>,
   started: boolean,
-  winner: string | null,
   map: number[][],
   score: number
 }
@@ -30,7 +29,6 @@ const createLobby = (): Lobby => {
       players: {},
       enemies: {},
       started: true, // TODO: Don't default to started
-      winner: null,
       map: getMap(),
       score: 10000000,
     }
@@ -74,8 +72,6 @@ export const removeFromLobby = (clientId: string) => {
   if (Object.keys(lobby.gameState.players).length === 0) {
     delete lobbies[lobby.id];
     console.log(`LOBBY ${lobby.id} DELETED`);
-  } else if (Object.keys(lobby.gameState.players).length === 1 && !lobby.gameState.winner) { // award victory to remaining player
-    lobby.gameState.winner = Object.keys(lobby.gameState.players)[0];
   }
 }
 
@@ -98,7 +94,7 @@ export const updatePlayerState = (clientId: string, newPlayerState: { x: number,
 
 export const rematch = (clientId) => {
   const lobby = getLobby(clientId);
-  if (!lobby || !lobby.gameState.winner) return;
+  if (!lobby || lobby.gameState.score) return;
 
   const player = lobby.gameState.players[clientId];
   if (!player) {
@@ -106,11 +102,6 @@ export const rematch = (clientId) => {
   }
 
   const playerData: Partial<Player> = {}
-
-  if (lobby.gameState.winner === clientId) {
-    console.log('WINNER', clientId);
-    playerData.score = (player.score ?? 0) + 1;
-  }
 
   removeFromLobby(clientId);
   const newLobby = addToLobby(clientId, playerData);

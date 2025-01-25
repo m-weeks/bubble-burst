@@ -9,7 +9,6 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
     players: {},
     enemies: {},
     started: false,
-    winner: null,
     map: [],
     score: 0,
   });

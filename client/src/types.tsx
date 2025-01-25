@@ -19,7 +19,6 @@ export type GameState = {
   players: Record<string, Player>,
   enemies: Record<number, Enemy>,
   started: boolean,
-  winner: string | null
   map: number[][],
   score: number
 }

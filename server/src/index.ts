@@ -88,6 +88,9 @@ let enemyIdCounter = 0;
 
 const spawnEnemies = () => {
   Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
+    if (!lobby.gameState.score) {
+      return;
+    }
     const numEnemies = Object.values(lobby.gameState.enemies).length;
     if (numEnemies < MAX_ENEMIES_PER_PLAYER * Object.values(lobby.gameState.players).length) {
       lobby.gameState.enemies[enemyIdCounter++] = initializeEnemy(lobby.gameState.map);
@@ -101,6 +104,10 @@ setInterval(() => {
 
 const moveEnemies = () => {
   Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
+    if (!lobby.gameState.score) {
+      return;
+    }
+
     const basePosition = lobby.gameState.map.flatMap((row, rowIndex) =>
       row.map((cell, colIndex) => (cell === BASE ? [colIndex, rowIndex] : null))
     ).find(Boolean) as [number, number];
@@ -147,7 +154,7 @@ const moveEnemies = () => {
       if (Math.floor(enemy.x) === basePosition[1] && Math.floor(enemy.z) === basePosition[0]) {
         delete lobby.gameState.enemies[enemyId];
         const lostAmount = Math.max(100, Math.round(lobby.gameState.score * 0.1));
-        lobby.gameState.score = lobby.gameState.score - lostAmount;
+        lobby.gameState.score = Math.max(lobby.gameState.score - lostAmount, 0);
       }
     });
   });
