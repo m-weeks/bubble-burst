@@ -22,10 +22,19 @@ export default function Map({ mapData } : { mapData: number[][] }) {
 
       {
         mapData.flatMap((row, i) => (
-          row.map((cell, j) => 
-            cell === 1 ? <Wall key={`${i}-${j}`} position={[i, 0, j]} args={wallSize} textureImage={wallImage} /> : null
-          )
-        ))
+          row.map((cell, j) => {
+            if (cell === 1) {
+              return <Wall key={`${i}-${j}`} position={[i, 0, j]} args={wallSize} textureImage={wallImage} />
+            }
+            if (cell === 2) {
+              return <Wall key={`${i}-${j}`} position={[i, 0, j]} args={wallSize} color='#000000' />
+            }
+            if (cell === 3) {
+              return <Wall key={`${i}-${j}`} position={[i, 0, j]} args={wallSize} color='#ff0000' />
+            }
+            return null
+          }
+        )))
       }
     </>
   );

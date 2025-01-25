@@ -7,8 +7,17 @@ export type Player = {
   moving: boolean,
 }
 
+export type Enemy = {
+  x: number,
+  z: number,
+  angle: number,
+  health: number,
+  moving: boolean,
+}
+
 export type GameState = {
   players: Record<string, Player>,
+  enemies: Record<number, Enemy>,
   started: boolean,
   winner: string | null
   map: number[][],

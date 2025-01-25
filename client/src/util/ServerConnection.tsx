@@ -7,6 +7,7 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
   // Stores the main game state, including all players
   const [gameState, setGameState] = useState<GameState>({
     players: {},
+    enemies: {},
     started: false,
     winner: null,
     map: [],
@@ -87,6 +88,8 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
             ...data.player,
           },
         }))
+      } else if (msg.type === 'FIRED') {
+        window.dispatchEvent(new CustomEvent('fire', { detail: { clientId: msg.data.clientId } }));
       }
     }
   
@@ -134,7 +137,6 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
     return (
       <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
         <div style={{ textAlign: 'center' }}>
-          <img src="/logo.png" style={{ width: '200px' }} />
           <div>
             Bubble Burst
           </div>

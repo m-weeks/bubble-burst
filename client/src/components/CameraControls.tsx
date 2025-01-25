@@ -39,8 +39,8 @@ export default function CameraControls({ localState, updatePlayer, movementData,
           return true; // Collision detected (out of bounds)
         }
 
-        // Check if the grid position is a wall
-        if (mapData[x][z] === 1) {
+        // Check if the grid position is a wall / object
+        if (mapData[x][z]) {
           return true; // Collision detected (wall)
         }
       }

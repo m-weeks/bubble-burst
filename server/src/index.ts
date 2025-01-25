@@ -2,7 +2,10 @@ import express from 'express';
 import _ from 'lodash';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
-import { addToLobby, getLobby, lobbies, rematch, removeFromLobby, updatePlayerState } from './lobby.js';
+import { addToLobby, fire, getLobby, lobbies, rematch, removeFromLobby, updatePlayerState } from './lobby.js';
+import { ENEMY_SPEED, MAX_ENEMIES_PER_PLAYER } from './constants.js';
+import { findPath, initializeEnemy } from './enemy.js';
+import { BASE } from './map.js';
 
 const app = express();
 const server = createServer(app);
@@ -24,6 +27,9 @@ wss.on('connection', (ws) => {
       case 'PLAYER_SYNC':
         const newPlayerData = _.pick(msg.data, ['x', 'z', 'angle', 'moving']);
         updatePlayerState(clientId, newPlayerData);
+        break;
+      case 'FIRE':
+        fire(clientId);
         break;
       case 'REMATCH':
         rematch(clientId);
@@ -77,6 +83,72 @@ export const updateClients = () => {
 setInterval(() => {
   updateClients();
 }, 15);
+
+let enemyIdCounter = 0;
+
+const spawnEnemies = () => {
+  Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
+    const numEnemies = Object.values(lobby.gameState.enemies).length;
+    if (numEnemies < MAX_ENEMIES_PER_PLAYER * Object.values(lobby.gameState.players).length) {
+      lobby.gameState.enemies[enemyIdCounter++] = initializeEnemy(lobby.gameState.map);
+    }
+  })
+}
+
+setInterval(() => {
+  spawnEnemies();
+}, 5000)
+
+const moveEnemies = () => {
+  Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
+    const basePosition = lobby.gameState.map.flatMap((row, rowIndex) =>
+      row.map((cell, colIndex) => (cell === BASE ? [colIndex, rowIndex] : null))
+    ).find(Boolean) as [number, number];
+
+    Object.entries(lobby.gameState.enemies).forEach(([enemyId, enemy]) => {
+      // Translate enemy's position to map coordinates
+      const mapX = Math.floor(enemy.x);
+      const mapY = Math.floor(enemy.z);
+
+      // Find or update path
+      if (!enemy.path || enemy.path.length <= 1) {
+        enemy.path = findPath(
+          { x: mapY, z: mapX },                       // Enemy's position in map coordinates
+          { x: basePosition[0], z: basePosition[1] }, // Base position in map coordinates
+          lobby.gameState.map
+        ).map((step) => ({ x: step.z, z: step.x })); // Convert back to enemy's coordinate system
+      }
+
+      const path = enemy.path;
+
+      if (path.length > 1) {
+        const nextStep = path[1];
+        const threshold = 0.05; // Slightly larger threshold for smoother corners
+
+        // Calculate the direction to the next step
+        const dx = nextStep.x - enemy.x;
+        const dz = nextStep.z - enemy.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+
+        if (distance < threshold) {
+          // Snap to the next step and move forward in the path
+          enemy.x = nextStep.x;
+          enemy.z = nextStep.z;
+          path.shift(); // Remove the reached step
+        } else {
+          // Smoothly move toward the next step
+          const movementScale = ENEMY_SPEED / distance; // Normalize and scale the movement
+          enemy.x += dx * movementScale;
+          enemy.z += dz * movementScale;
+        }
+      }
+    });
+  });
+}
+
+setInterval(() => {
+  moveEnemies();
+}, 15); // Update 60 times per second for smooth movement
 
 server.listen(3000, () => {
   console.log('server running at http://localhost:3000');

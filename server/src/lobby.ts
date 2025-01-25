@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { LOBBY_SIZE } from './constants.js';
 import { initializePlayer, Player } from './player.js';
+import { Enemy } from './enemy.js';
 import { broadcastMsg, singleMsg } from './index.js';
 import { getMap } from './map.js';
 
@@ -11,6 +12,7 @@ type Lobby = {
 
 type GameState = {
   players: Record<string, Player>,
+  enemies: Record<number, Enemy>,
   started: boolean,
   winner: string | null,
   map: number[][],
@@ -25,7 +27,8 @@ const createLobby = (): Lobby => {
     id,
     gameState: {
       players: {},
-      started: false,
+      enemies: {},
+      started: true, // TODO: Don't default to started
       winner: null,
       map: getMap(),
     }
@@ -116,4 +119,21 @@ export const rematch = (clientId) => {
       player: newLobby.gameState.players[clientId],
     }
   })
+}
+
+export const fire = (clientId) => {
+  const lobby = getLobby(clientId);
+  if (!lobby) return;
+
+  const player = lobby.gameState.players[clientId];
+  if (!player) {
+    return;
+  }
+
+  broadcastMsg(lobby.id, {
+    type: 'FIRED',
+    data: {
+      clientId
+    }
+  });
 }
