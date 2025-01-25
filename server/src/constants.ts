@@ -1,0 +1,1 @@
+export const LOBBY_SIZE = 4;
