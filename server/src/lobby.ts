@@ -16,6 +16,7 @@ type GameState = {
   started: boolean,
   winner: string | null,
   map: number[][],
+  score: number
 }
 
 export const lobbies: Record<string, Lobby> = {
@@ -31,6 +32,7 @@ const createLobby = (): Lobby => {
       started: true, // TODO: Don't default to started
       winner: null,
       map: getMap(),
+      score: 10000000,
     }
   };
   lobbies[id] = lobby;

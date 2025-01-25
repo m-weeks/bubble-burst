@@ -21,6 +21,7 @@ export type GameState = {
   started: boolean,
   winner: string | null
   map: number[][],
+  score: number
 }
 
 export type LocalState = {

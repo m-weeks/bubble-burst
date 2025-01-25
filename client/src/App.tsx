@@ -16,7 +16,7 @@ function App() {
         {
           (({ gameState, localState, updatePlayer, sendMessage }) => (
             <>
-              {/* <HUD localState={localState} gameState={gameState} sendMessage={sendMessage} />  */}
+              <HUD gameState={gameState} /> 
               <Controls sendMessage={sendMessage}>
                 {({ movementData }) => (
                   <Canvas style={{ width: '100vw', height: '100vh' }} shadows>

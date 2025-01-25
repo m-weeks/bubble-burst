@@ -142,6 +142,13 @@ const moveEnemies = () => {
           enemy.z += dz * movementScale;
         }
       }
+
+      // This is the opposite of basePosition used above? It works and I don't have time to understand why
+      if (Math.floor(enemy.x) === basePosition[1] && Math.floor(enemy.z) === basePosition[0]) {
+        delete lobby.gameState.enemies[enemyId];
+        const lostAmount = Math.max(100, Math.round(lobby.gameState.score * 0.1));
+        lobby.gameState.score = lobby.gameState.score - lostAmount;
+      }
     });
   });
 }

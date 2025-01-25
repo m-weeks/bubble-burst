@@ -11,6 +11,7 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
     started: false,
     winner: null,
     map: [],
+    score: 0,
   });
 
   // Stores client information and the local players state. We will rely on this as the source of truth for the client. This is to prevent rubberbanding movement due to ping
