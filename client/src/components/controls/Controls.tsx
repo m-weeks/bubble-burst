@@ -107,7 +107,7 @@ const Controls = ({ children, sendMessage }: { children: ({ movementData } : { m
         <>
           <div style={{ position: 'fixed', zIndex: '1', bottom: '20vh', right: '10vw', opacity: 0.5 }}>
             <button className={`fireButton ${clicked ? 'clicked' : ''}`} onPointerDown={handleFire} onPointerUp={handleStopFire}>
-              FIRE!
+              PUNCH!
             </button>
             <Joystick
               size={75}

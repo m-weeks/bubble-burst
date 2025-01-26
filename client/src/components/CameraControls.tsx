@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { useEffect, useRef } from 'react';
 import { useThree, useFrame } from '@react-three/fiber';
-import { Euler, Quaternion, Vector3 } from 'three'
+import { Quaternion, Vector3 } from 'three'
 import { GameData } from '../types';
-import { CAMERA_ANGLE, CAMERA_HEIGHT, CAMERA_OFFSET, MOVE_SPEED, ROTATION_SPEED } from '../constants'
+import { MOVE_SPEED, ROTATION_SPEED } from '../constants'
 import { MovementData } from './controls/Controls';
 
 export default function CameraControls({ localState, updatePlayer, movementData, gameState }: Pick<GameData, 'localState' | 'updatePlayer' | 'gameState'> & { movementData: MovementData}) {

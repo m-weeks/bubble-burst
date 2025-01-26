@@ -3,9 +3,8 @@ import { Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from '../types';
 import avatarData from './assets/avatar';
-import HealthBar from './HealthBar';
 
-const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player: Player, currentPlayer?: boolean, clientId: string, curPlayer: Player }) => {
+const Avatar = ({ player, clientId, curPlayer }: { player: Player, clientId: string, curPlayer: Player }) => {
   const { moving, angle } = player
 
   const [punching, setPunching] = useState(false);
@@ -31,8 +30,6 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
       timeouts.forEach((timeout) => clearTimeout(timeout));
     };
   }, [clientId]);
-
-  const [opacity, setOpacity] = useState(1);
 
   const [stepFrame, setStepFrame] = useState(1);
   useEffect(() => {
@@ -121,7 +118,7 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
         scale={[0.75, 0.9, 0.75]}
       >
         <planeGeometry args={[1.5, 1.125]} />
-        <meshStandardMaterial map={texture} transparent opacity={opacity} />
+        <meshStandardMaterial map={texture} transparent />
       </mesh>
       
       {/* {

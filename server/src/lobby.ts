@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { LOBBY_SIZE } from './constants.js';
-import { initializePlayer, Player } from './player.js';
+import { getStartingPosition, initializePlayer, Player } from './player.js';
 import { Enemy, onHit } from './enemy.js';
-import { broadcastMsg, singleMsg } from './index.js';
-import { getMap, WALL } from './map.js';
+import { broadcastMsg } from './index.js';
+import { getMap } from './map.js';
 
 export type Lobby = {
   id: string,
@@ -57,7 +57,16 @@ export const addToLobby = (clientId: string, player?: Partial<Player>) => {
   console.log('NUM PLAYERS', Object.keys(lobby.gameState.players).length);
 
   // Change map if needed
-  lobby.gameState.map = getMap( Object.keys(lobby.gameState.players).length)
+  const map = getMap(Object.keys(lobby.gameState.players).length)
+  lobby.gameState.map = map
+  // move players if needed
+  Object.keys(lobby.gameState.players).forEach((id) => {
+    const [x, z] = getStartingPosition(map);
+    if (lobby?.gameState) {
+      lobby.gameState.players[id].x = x;
+      lobby.gameState.players[id].z = z;
+    }
+  })
 
   return lobby;
 }

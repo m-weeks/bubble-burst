@@ -1,8 +1,8 @@
-import { broadcastMsg } from ".";
-import { ENEMY_SPEED } from "./constants";
-import { Lobby } from "./lobby";
-import { ENEMY_SPAWN, WALL } from "./map";
-import { Player } from "./player";
+import { broadcastMsg } from "./index.js";
+import { ENEMY_SPEED } from "./constants.js";
+import { Lobby } from "./lobby.js";
+import { ENEMY_SPAWN, WALL } from "./map.js";
+import { Player } from "./player.js";
 
 export type Enemy = {
   x: number,

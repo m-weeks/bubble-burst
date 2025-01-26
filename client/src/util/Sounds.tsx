@@ -12,7 +12,6 @@ import punch1 from '../components/assets/audio/punch-1.mp3';
 import punch2 from '../components/assets/audio/punch-2.mp3';
 import punch3 from '../components/assets/audio/punch-3.mp3';
 import punch4 from '../components/assets/audio/punch-4.mp3';
-import reload from '../components/assets/audio/reload.mp3';
 import { Enemy, Player } from "../types";
 
 const hitNoises = [hit1, hit2, hit3, hit4];

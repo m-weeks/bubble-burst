@@ -12,7 +12,7 @@ const rand = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const getStartingPosition = (map: number[][]) => {
+export const getStartingPosition = (map: number[][]) => {
   const zeroIndices: [number, number][] = [];
   map.forEach((row, rowIndex) => {
     row.forEach((col, colIndex) => {

@@ -3,7 +3,7 @@ import _ from 'lodash';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
 import { addToLobby, fire, getLobby, lobbies, start, removeFromLobby, updatePlayerState } from './lobby.js';
-import { ENEMY_SPEED, MAX_ENEMIES_PER_PLAYER } from './constants.js';
+import { MAX_ENEMIES_PER_PLAYER } from './constants.js';
 import { findPath, initializeEnemy } from './enemy.js';
 import { BASE } from './map.js';
 

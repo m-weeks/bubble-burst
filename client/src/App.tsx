@@ -8,7 +8,6 @@ import Controls from './components/controls/Controls';
 import HUD from './components/HUD';
 import Sounds from './util/Sounds';
 import React from 'react';
-import HealthBar from './components/HealthBar';
 import Enemy from './components/Enemy';
 import Weapon from './components/Weapon';
 
@@ -36,11 +35,10 @@ function App() {
                           }
                           return (
                             <React.Fragment key={playerId}>
-                              <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
+                              {Boolean(gameState.score) && (<Sounds target={player} curPlayer={localState.player} targetId={playerId} />)}
                               <Avatar
                                 player={playerId === localState.clientId ? localState.player : player}
                                 clientId={playerId}
-                                currentPlayer={playerId === localState.clientId}
                                 curPlayer={localState.player}
                               />
                             </React.Fragment>
@@ -51,7 +49,7 @@ function App() {
                         _.map(gameState.enemies, (enemy, enemyId) => {
                           return (
                             <>
-                              <Sounds target={enemy} curPlayer={localState.player} targetId={enemyId} />
+                              {Boolean(gameState.score) && (<Sounds target={enemy} curPlayer={localState.player} targetId={enemyId} />)}
                               <Enemy enemy={enemy} enemyId={enemyId} curPlayer={localState.player} key={enemyId} />
                             </>
                           );
