@@ -148,6 +148,18 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
       <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
         <div style={{ textAlign: 'center' }}>
           <img src="/logo.png" style={{ width: '400px' }} />
+          <div style={{ fontSize: '16px', maxWidth: '600px', marginBottom: '20px' }}>
+            <div style={{ marginBottom: '10px' }}>It's the year 2000. You and your fat-cat CEO friends are swimming in investment funds for your extremely successful yet extremely stupid online business.</div>
+
+            <div style={{ marginBottom: '10px' }}>Markets have just opened and all the stock brokers are on their way to sell their stocks in your business. It's your job to stop them to prevent your stock from crashing and the dot-com bubble from bursting!</div>
+
+            <div>
+              <strong>Controls:</strong>
+              <div><strong>WASD:</strong> Move</div>
+              <div><strong>Q/E:</strong> Strafe</div>
+              <div><strong>Space:</strong> Punch</div>
+            </div>
+          </div>
           <div style={{ fontSize: '24px' }}>
             <div>Players: {Object.keys(gameState.players).length}</div>
           </div>
