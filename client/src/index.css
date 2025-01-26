@@ -1,6 +1,6 @@
 @font-face {
-  font-family: 'Commando';
-  src: url('/commando.ttf') format('truetype');
+  font-family: 'Pluvix';
+  src: url('/pluvix.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -10,7 +10,7 @@ html, body {
   padding: 0;
   height: 100%;
   overflow: hidden;
-  font-family: 'Commando', sans-serif;
+  font-family: 'Pluvix', sans-serif;
 }
 
 canvas {

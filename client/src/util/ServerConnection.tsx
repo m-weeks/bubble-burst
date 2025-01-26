@@ -147,9 +147,7 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
     return (
       <div style={{ height: '100vh', width: '100vw', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '48px' }}>
         <div style={{ textAlign: 'center' }}>
-          <div>
-            Bubble Burst
-          </div>
+          <img src="/logo.png" style={{ width: '400px' }} />
           <div style={{ fontSize: '24px' }}>
             <div>Players: {Object.keys(gameState.players).length}</div>
           </div>

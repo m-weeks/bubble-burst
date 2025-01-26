@@ -14,6 +14,7 @@ const HUD = ({ gameState } : { gameState: GameState }) => {
             {
                 !gameState.score && (
                     <div style={{ fontSize: '48px', position: 'fixed', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center', zIndex: 4, color: 'white' }}>
+                        <img src="/logo.png" style={{ width: '200px' }} />
                         BANKRUPT
                         <div style={{ marginTop: '20px' }}>
                             <button className='startButton' onClick={() => window.location.reload()}>
