@@ -90,6 +90,8 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
         }))
       } else if (msg.type === 'FIRED') {
         window.dispatchEvent(new CustomEvent('fire', { detail: { clientId: msg.data.clientId } }));
+      } else if (msg.type === 'DAMAGE_TAKEN') {
+        window.dispatchEvent(new CustomEvent('damageTaken', { detail: { enemyId: msg.data.enemyId } }));
       }
     }
   

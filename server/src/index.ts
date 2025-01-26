@@ -114,6 +114,7 @@ const moveEnemies = () => {
 
     Object.entries(lobby.gameState.enemies).forEach(([enemyId, enemy]) => {
       if (enemy.disableMovement) {
+        lobby.gameState.enemies[enemyId].moving = false;
         return;
       }
       // Translate enemy's position to map coordinates
@@ -127,6 +128,7 @@ const moveEnemies = () => {
       ).map((step) => ({ x: step.z, z: step.x }));
     
       if (path.length > 1) {
+        lobby.gameState.enemies[enemyId].moving = true;
         const nextStep = path[1];
         const threshold = 0.05; // Slightly larger threshold for smoother corners
 
@@ -145,7 +147,12 @@ const moveEnemies = () => {
           const movementScale = ENEMY_SPEED / distance; // Normalize and scale the movement
           enemy.x += dx * movementScale;
           enemy.z += dz * movementScale;
+
+          // Set the angle of the enemy to the direction they are moving
+          enemy.angle = (Math.atan2(dx, dz) + Math.PI);
         }
+      } else {
+        lobby.gameState.enemies[enemyId].moving = false;
       }
 
       // This is the opposite of basePosition used above? It works and I don't have time to understand why

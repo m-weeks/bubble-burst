@@ -9,6 +9,7 @@ import HUD from './components/HUD';
 import Sounds from './util/Sounds';
 import React from 'react';
 import HealthBar from './components/HealthBar';
+import Enemy from './components/Enemy';
 
 function App() {
   return (
@@ -42,13 +43,7 @@ function App() {
                     {
                       _.map(gameState.enemies, (enemy, enemyId) => {
                         return (
-                          <React.Fragment key={enemyId}>
-                            <HealthBar enemy={enemy} />
-                            <mesh position={[enemy.x, 0 - (0.1 / 2), enemy.z]} receiveShadow>
-                              <boxGeometry args={[0.5, 2, 0.5]} />
-                              <meshStandardMaterial color='#00FF00' />
-                            </mesh>
-                          </React.Fragment>
+                          <Enemy enemy={enemy} enemyId={Number(enemyId)} curPlayer={localState.player} key={enemyId} />
                         );
                       })
                     }

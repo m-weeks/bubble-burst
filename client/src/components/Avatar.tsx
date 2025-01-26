@@ -8,8 +8,7 @@ import HealthBar from './HealthBar';
 const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player: Player, currentPlayer?: boolean, clientId: string, curPlayer: Player }) => {
   const { moving, angle } = player
 
-  const [firing, setFiring] = useState(false);
-  const [iFrame, setIFrame] = useState(false);
+  const [punching, setPunching] = useState(false);
 
   useEffect(() => {
     let timeouts: number[] = [];
@@ -18,51 +17,22 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
         return
       }
       
-      setFiring(true);
+      setPunching(true);
       timeouts.push(setTimeout(() => {
-        setFiring(false);
+        setPunching(false);
       }, 250));
     }
     // @ts-ignore
     window.addEventListener('fire', handleFire);
 
-    const handleDamage = (event: CustomEvent) => {
-      if (event.detail.playerId !== clientId) {
-        return
-      }
-      setIFrame(true);
-      timeouts.push(setTimeout(() => {
-        setIFrame(false);
-      }, 500));
-    }
-    // @ts-ignore
-    window.addEventListener('damageTaken', handleDamage);
-
     return () => {
       // @ts-ignore
       window.removeEventListener('fire', handleFire);
-      // @ts-ignore
-      window.removeEventListener('damageTaken', handleDamage);
       timeouts.forEach((timeout) => clearTimeout(timeout));
     };
   }, [clientId]);
 
   const [opacity, setOpacity] = useState(1);
-
-  useEffect(() => {
-    let interval;
-    if (iFrame) {
-      interval = setInterval(() => {
-        setOpacity((oldOpacity) => oldOpacity === 1 ? 0 : 1);
-      }, 50)
-    }
-    if (!iFrame) {
-      setOpacity(1);
-    }
-    return () => {
-      clearInterval(interval);
-    }
-  }, [iFrame])
 
   const [stepFrame, setStepFrame] = useState(1);
   useEffect(() => {
@@ -78,12 +48,20 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
     }
   }, [moving])
 
+  const punchTypeRef = useRef(avatarData.front.punch[0])
+  useEffect(() => {
+    if (punching) {
+      punchTypeRef.current = Math.random() < 0.5 ? avatarData.front.punch[0] : avatarData.front.punch[1];
+    }
+  }, [punching])
+
+
   const avatarType = useMemo(() => {
     let diff = (curPlayer.angle - angle) * (180 / Math.PI);
     diff = (diff +  360) % 360;
     if (diff > 45 && diff < 135) {
-        if (firing) {
-          return avatarData.right.shoot;
+        if (punching) {
+          return avatarData.right.punch[0];
         }
       if (moving) { 
         return avatarData.right.step[stepFrame - 1];
@@ -91,8 +69,8 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
       return avatarData.right.idle;
     }
     if (diff > 135 && diff < 225) {
-        if (firing) {
-          return avatarData.front.shoot;
+        if (punching) {
+          return punchTypeRef.current;
         }
       if (moving) {
         return avatarData.front.step[stepFrame - 1];
@@ -100,8 +78,8 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
       return avatarData.front.idle;
     }
     if (diff > 225 && diff < 315) {
-        if (firing) {
-          return avatarData.left.shoot;
+        if (punching) {
+          return avatarData.left.punch[0];
         }
       if (moving) { 
         return avatarData.left.step[stepFrame - 1];
@@ -112,7 +90,7 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
       return avatarData.behind.step[stepFrame - 1];
     }
     return avatarData.behind.idle;
-  }, [angle, curPlayer.angle, stepFrame, moving, firing]);
+  }, [angle, curPlayer.angle, stepFrame, moving, punching]);
   
   const texture = useLoader(TextureLoader, avatarType);
   const avatarRef = useRef<Mesh>(null);
