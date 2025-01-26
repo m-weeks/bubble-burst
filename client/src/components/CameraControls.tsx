@@ -17,11 +17,10 @@ export default function CameraControls({ localState, updatePlayer, movementData,
   const originalPlayerRef = useRef(player);
 
   useEffect(() => {
-    camera.position.set(
-      originalPlayerRef.current.x - Math.sin(originalPlayerRef.current.angle) * CAMERA_OFFSET,
-      CAMERA_HEIGHT,
-      originalPlayerRef.current.z - Math.cos(originalPlayerRef.current.angle) * CAMERA_OFFSET
-    );
+    camera.position.x = originalPlayerRef.current.x;
+    camera.position.z = originalPlayerRef.current.z;
+    camera.position.y = 0.3;
+    camera.rotation.y = originalPlayerRef.current.angle;
   }, []);
 
   const checkCollision = (newPosition) => {
@@ -52,7 +51,7 @@ export default function CameraControls({ localState, updatePlayer, movementData,
   const { x, y, speed, rotateLeft, rotateRight, rotationSpeed } = movementData;
 
   useFrame((_state, delta) => {
-    if (gameState.winner) {
+    if (!gameState.score) {
       return;
     }
     const speedPerFrame = MOVE_SPEED * delta * speed;
@@ -86,12 +85,11 @@ export default function CameraControls({ localState, updatePlayer, movementData,
       newPlayerData.angle -= rotationPerFrame;
     }
 
-    camera.position.x = newPlayerData.x + Math.sin(newPlayerData.angle) * CAMERA_OFFSET;
-    camera.position.z = newPlayerData.z + Math.cos(newPlayerData.angle) * CAMERA_OFFSET;
+    camera.position.x = newPlayerData.x;
+    camera.position.z = newPlayerData.z;
 
     const yAxisRotation = new Quaternion().setFromAxisAngle(new Vector3(0, 1, 0), newPlayerData.angle);
-    const xAxisRotation = new Quaternion().setFromEuler(new Euler(CAMERA_ANGLE, 0, 0));
-    camera.setRotationFromQuaternion(yAxisRotation.multiply(xAxisRotation))
+    camera.setRotationFromQuaternion(yAxisRotation)
 
     // Update local state copy to have new position. This will get synced with the server at a regular interval
     updatePlayer({

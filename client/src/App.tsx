@@ -27,9 +27,14 @@ function App() {
                     <Map mapData={gameState.map} />
                     {
                       _.map(gameState.players, (player, playerId) => {
+                        if (playerId === localState.clientId) {
+                          return (
+                            <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
+                          );
+                        }
                         return (
                           <React.Fragment key={playerId}>
-                            <Sounds player={player} curPlayer={localState.player} playerId={playerId} />
+                            <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
                             <Avatar
                               player={playerId === localState.clientId ? localState.player : player}
                               clientId={playerId}
@@ -43,7 +48,10 @@ function App() {
                     {
                       _.map(gameState.enemies, (enemy, enemyId) => {
                         return (
-                          <Enemy enemy={enemy} enemyId={Number(enemyId)} curPlayer={localState.player} key={enemyId} />
+                          <>
+                            <Sounds target={enemy} curPlayer={localState.player} targetId={enemyId} />
+                            <Enemy enemy={enemy} enemyId={enemyId} curPlayer={localState.player} key={enemyId} />
+                          </>
                         );
                       })
                     }

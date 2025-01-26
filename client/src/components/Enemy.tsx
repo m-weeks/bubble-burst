@@ -1,11 +1,11 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Mesh, Object3D, TextureLoader } from 'three';
+import { Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Enemy as EnemyType, Player } from '../types';
 import enemyAvatarData from './assets/enemy';
 import HealthBar from './HealthBar';
 
-const Enemy = ({ enemy, enemyId, curPlayer }: { enemy: EnemyType, enemyId: number, curPlayer: Player }) => {
+const Enemy = ({ enemy, enemyId, curPlayer }: { enemy: EnemyType, enemyId: string, curPlayer: Player }) => {
   const { moving, angle } = enemy
 
   const [iFrame, setIFrame] = useState(false);
@@ -14,7 +14,7 @@ const Enemy = ({ enemy, enemyId, curPlayer }: { enemy: EnemyType, enemyId: numbe
     let timeouts: number[] = [];
 
     const handleDamage = (event: CustomEvent) => {
-      if (Number(event.detail.enemyId) !== enemyId) {
+      if (event.detail.enemyId !== enemyId) {
         return
       }
 
@@ -107,7 +107,7 @@ const Enemy = ({ enemy, enemyId, curPlayer }: { enemy: EnemyType, enemyId: numbe
   useFrame(({ camera }) => {
     if (enemyRef.current) {
       // Make the plane always face the current player (billboarding effect)
-      enemyRef.current.lookAt(camera.position);
+      enemyRef.current.lookAt(new Vector3(camera.position.x, 0, camera.position.z));
     }
   });
 

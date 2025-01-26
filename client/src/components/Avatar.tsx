@@ -1,5 +1,5 @@
 import { useFrame, useLoader } from '@react-three/fiber';
-import { Mesh, Object3D, TextureLoader } from 'three';
+import { Mesh, Object3D, TextureLoader, Vector3 } from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from '../types';
 import avatarData from './assets/avatar';
@@ -97,8 +97,7 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
 
   useFrame(({ camera }) => {
     if (avatarRef.current) {
-      // Make the plane always face the current player (billboarding effect)
-      avatarRef.current.lookAt(camera.position);
+      avatarRef.current.lookAt(new Vector3(camera.position.x, 0, camera.position.z));
     }
   });
 

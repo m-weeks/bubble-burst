@@ -12,7 +12,7 @@ export type Lobby = {
 
 type GameState = {
   players: Record<string, Player>,
-  enemies: Record<number, Enemy>,
+  enemies: Record<string, Enemy>,
   started: boolean,
   map: number[][],
   score: number

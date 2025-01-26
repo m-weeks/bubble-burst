@@ -202,7 +202,10 @@ export function onHit (player: Player, lobby: Lobby) {
       }, interval);
   
       if (enemy.health <= 0) {
-        delete lobby.gameState.enemies[enemyId];
+        // Delete enemy after a delay so the iframe animation can show
+        setTimeout(() => {
+          delete lobby.gameState.enemies[enemyId];
+        }, 500)
       }
   
       broadcastMsg(lobby.id, {

@@ -8,22 +8,32 @@ import walk1 from '../components/assets/audio/walk-1.mp3';
 import walk2 from '../components/assets/audio/walk-2.mp3';
 import walk3 from '../components/assets/audio/walk-3.mp3';
 import walk4 from '../components/assets/audio/walk-4.mp3';
-import shot from '../components/assets/audio/shot.mp3';
+import punch1 from '../components/assets/audio/punch-1.mp3';
+import punch2 from '../components/assets/audio/punch-2.mp3';
+import punch3 from '../components/assets/audio/punch-3.mp3';
+import punch4 from '../components/assets/audio/punch-4.mp3';
 import reload from '../components/assets/audio/reload.mp3';
-import { Player } from "../types";
+import { Enemy, Player } from "../types";
 
 const hitNoises = [hit1, hit2, hit3, hit4];
 const walkNoises = [walk1, walk2, walk3, walk4];
+const punchNoises = [punch1, punch2, punch3, punch4];
 
 const audioCache = new Map<string, AudioBuffer>();
 
-const Sounds = ({ player, curPlayer, playerId }: { player: Player, playerId: string, curPlayer: Player }) => {
-  const playerRef = useRef(player);
-  playerRef.current = player;
+type SoundProps = {
+  target: Player | Enemy;
+  targetId: string;
+  curPlayer: Player;
+}
+
+const Sounds = ({ target, curPlayer, targetId }: SoundProps) => {
+  const targetRef = useRef(target);
+  targetRef.current = target;
   const curPlayerRef = useRef(curPlayer);
   curPlayerRef.current = curPlayer;
-  const playerIdRef = useRef(playerId)
-  playerIdRef.current = playerId;
+  const targetIdRef = useRef(targetId)
+  targetIdRef.current = targetId;
 
   const audioLoaderRef = useRef(new AudioLoader());
   const audioLoader = audioLoaderRef.current;
@@ -46,11 +56,11 @@ const Sounds = ({ player, curPlayer, playerId }: { player: Player, playerId: str
     const sound = new PositionalAudio(listener);
     
     const myPosition = [curPlayerRef.current.x, 0, curPlayerRef.current.z];
-    const playerPosition = [playerRef.current.x, 0, playerRef.current.z];
+    const otherPosition = [targetRef.current?.x, 0, targetRef.current.z];
 
-    const playerPos = new Vector3(...playerPosition);
+    const otherPos = new Vector3(...otherPosition);
     const myPos = new Vector3(...myPosition);
-    const distance = playerPos.distanceTo(myPos);
+    const distance = otherPos.distanceTo(myPos);
     const volume = Math.min(1 / Math.pow(distance, 4), 1) * scale;
 
     if (volume < 0.02) {
@@ -69,13 +79,8 @@ const Sounds = ({ player, curPlayer, playerId }: { player: Player, playerId: str
   })
 
   useEffect(() => {
-    const handleReload = () => {
-      playSound.current(reload, 0.5);
-    }
-    window.addEventListener('reloaded', handleReload);
-
     const handleDamageTaken = (event: CustomEvent) => {
-      if (event.detail.playerId === playerIdRef.current) {
+      if (event.detail.enemyId === targetIdRef.current) {
         playSound.current(hitNoises[Math.floor(Math.random() * hitNoises.length)], 1);
       }
     }
@@ -83,15 +88,14 @@ const Sounds = ({ player, curPlayer, playerId }: { player: Player, playerId: str
     window.addEventListener('damageTaken', handleDamageTaken);
 
     const handleFire = (event: CustomEvent) => {
-      if (event.detail.clientId === playerIdRef.current) {
-        playSound.current(shot, 0.5);
+      if (event.detail.clientId === targetIdRef.current) {
+        playSound.current(punchNoises[Math.floor(Math.random() * punchNoises.length)], 0.5);
       }
     }
     // @ts-ignore
     window.addEventListener('fire', handleFire);
 
     return () => {
-      window.removeEventListener('reloaded', handleReload);
       // @ts-ignore
       window.removeEventListener('damageTaken', handleDamageTaken);
       // @ts-ignore
@@ -104,12 +108,12 @@ const Sounds = ({ player, curPlayer, playerId }: { player: Player, playerId: str
       playSound.current(walkNoises[Math.floor(Math.random() * walkNoises.length)], 0.5);
     }
     let interval;
-    if (player.moving) {
+    if (target.moving) {
       interval = setInterval(playWalkSound, 250); // Play sound every 0.5 seconds
     }
 
     return () => clearInterval(interval);
-  }, [player.moving]);
+  }, [target.moving]);
 
   return null;
 }

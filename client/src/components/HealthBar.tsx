@@ -18,7 +18,7 @@ const HealthBar = ({ enemy }: { enemy: Enemy }) => {
 
   return (
     <>
-      <mesh position={[enemy.x, 0.75, enemy.z]} ref={barRef1}>
+      <mesh position={[enemy.x, 0.6, enemy.z]} ref={barRef1}>
         <boxGeometry args={[Math.max(enemy.health, 0) / 100, 0.1, 0.1]} />
         <meshStandardMaterial color="green" />
       </mesh>
