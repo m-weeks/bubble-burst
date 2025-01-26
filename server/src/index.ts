@@ -2,7 +2,7 @@ import express from 'express';
 import _ from 'lodash';
 import { createServer } from 'http';
 import { WebSocketServer, WebSocket } from 'ws';
-import { addToLobby, fire, getLobby, lobbies, rematch, removeFromLobby, updatePlayerState } from './lobby.js';
+import { addToLobby, fire, getLobby, lobbies, start, removeFromLobby, updatePlayerState } from './lobby.js';
 import { ENEMY_SPEED, MAX_ENEMIES_PER_PLAYER } from './constants.js';
 import { findPath, initializeEnemy } from './enemy.js';
 import { BASE } from './map.js';
@@ -31,8 +31,8 @@ wss.on('connection', (ws) => {
       case 'FIRE':
         fire(clientId);
         break;
-      case 'REMATCH':
-        rematch(clientId);
+      case 'START':
+        start(clientId);
         break;
     }
   });

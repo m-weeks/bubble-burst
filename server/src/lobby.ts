@@ -28,7 +28,7 @@ const createLobby = (): Lobby => {
     gameState: {
       players: {},
       enemies: {},
-      started: true, // TODO: Don't default to started
+      started: false,
       map: getMap(),
       score: 10000000,
     }
@@ -43,7 +43,7 @@ export const getLobby = (clientId: string): Lobby | undefined => {
 
 export const addToLobby = (clientId: string, player?: Partial<Player>) => {
   // Find a lobby with room for the player
-  let lobby = Object.values(lobbies).find((lobby) => Object.keys(lobby.gameState.players).length < LOBBY_SIZE /* && !lobby.gameState.started */); // TODO: Enable this check
+  let lobby = Object.values(lobbies).find((lobby) => Object.keys(lobby.gameState.players).length < LOBBY_SIZE && !lobby.gameState.started); // TODO: Enable this check
   if (!lobby) { // if one doesn't exist, create a new lobby
     lobby = createLobby();
   }
@@ -52,10 +52,6 @@ export const addToLobby = (clientId: string, player?: Partial<Player>) => {
     ...player,
     ...initializePlayer(lobby.gameState.map)
   };
-
-  if (Object.values(lobby.gameState.players).length >= LOBBY_SIZE) {
-    lobby.gameState.started = true;
-  }
 
   console.log('PLAYER JOINED', clientId)
   console.log('NUM PLAYERS', Object.keys(lobby.gameState.players).length);
@@ -92,26 +88,11 @@ export const updatePlayerState = (clientId: string, newPlayerState: { x: number,
   }
 };
 
-export const rematch = (clientId) => {
+export const start = (clientId) => {
   const lobby = getLobby(clientId);
-  if (!lobby || lobby.gameState.score) return;
+  if (!lobby || lobby.gameState.started) return;
 
-  const player = lobby.gameState.players[clientId];
-  if (!player) {
-    return;
-  }
-
-  const playerData: Partial<Player> = {}
-
-  removeFromLobby(clientId);
-  const newLobby = addToLobby(clientId, playerData);
-
-  singleMsg(clientId, {
-    type: 'RESET_PLAYER',
-    data: {
-      player: newLobby.gameState.players[clientId],
-    }
-  })
+  lobby.gameState.started = true;
 }
 
 export const fire = (clientId) => {

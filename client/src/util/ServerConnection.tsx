@@ -143,9 +143,18 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
             Bubble Burst
           </div>
           <div style={{ fontSize: '24px' }}>
+            <div>Players: {Object.keys(gameState.players).length}</div>
+          </div>
+          <div style={{ fontSize: '24px' }}>
             <div>
-              Waiting for another player<Ellipsis/>
+              Waiting for more players<Ellipsis/>
             </div>
+          </div>
+
+          <div>
+            <button className='startButton' onClick={() => sendMessage('START', {})}>
+              Start
+            </button>
           </div>
         </div>
       </div>

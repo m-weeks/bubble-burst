@@ -53,3 +53,16 @@ button {
 .stroke {
   text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000
 }
+
+.startButton {
+  transition: all 0.25s;
+  padding: 12px;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 6px;
+}
+
+.startButton:hover {
+  background-color: black;
+  color: white
+}
