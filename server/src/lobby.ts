@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { LOBBY_SIZE } from './constants.js';
 import { initializePlayer, Player } from './player.js';
-import { Enemy } from './enemy.js';
+import { Enemy, onHit } from './enemy.js';
 import { broadcastMsg, singleMsg } from './index.js';
-import { getMap } from './map.js';
+import { getMap, WALL } from './map.js';
 
-type Lobby = {
+export type Lobby = {
   id: string,
   gameState: GameState,
 }
@@ -43,7 +43,7 @@ export const getLobby = (clientId: string): Lobby | undefined => {
 
 export const addToLobby = (clientId: string, player?: Partial<Player>) => {
   // Find a lobby with room for the player
-  let lobby = Object.values(lobbies).find((lobby) => Object.keys(lobby.gameState.players).length < LOBBY_SIZE && !lobby.gameState.started);
+  let lobby = Object.values(lobbies).find((lobby) => Object.keys(lobby.gameState.players).length < LOBBY_SIZE /* && !lobby.gameState.started */); // TODO: Enable this check
   if (!lobby) { // if one doesn't exist, create a new lobby
     lobby = createLobby();
   }
@@ -119,9 +119,16 @@ export const fire = (clientId) => {
   if (!lobby) return;
 
   const player = lobby.gameState.players[clientId];
-  if (!player) {
+  if (!player || player.firing) {
     return;
   }
+
+  player.firing = true;
+  setTimeout(() => {
+    lobby.gameState.players[clientId].firing = false;
+  }, 1000);
+
+  onHit(player, lobby);
 
   broadcastMsg(lobby.id, {
     type: 'FIRED',
@@ -129,4 +136,4 @@ export const fire = (clientId) => {
       clientId
     }
   });
-}
+};

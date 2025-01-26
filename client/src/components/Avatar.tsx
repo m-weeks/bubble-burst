@@ -2,7 +2,6 @@ import { useFrame, useLoader } from '@react-three/fiber';
 import { Mesh, Object3D, TextureLoader } from 'three';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Player } from '../types';
-import FiringCone from './FiringCone';
 import avatarData from './assets/avatar';
 import HealthBar from './HealthBar';
 
@@ -148,7 +147,7 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
         <meshStandardMaterial map={texture} transparent opacity={opacity} />
       </mesh>
       
-      {
+      {/* {
         currentPlayer && (
           <spotLight
             position={[
@@ -164,18 +163,10 @@ const Avatar = ({ player, currentPlayer = false, clientId, curPlayer }: { player
             castShadow
           />
         )
-      }
+      } */}
       
       {/* Invisible object that the spotlight is targeting */}
       <primitive object={targetRef.current} />
-
-      <FiringCone player={player} clientId={clientId} />
-
-      {
-        !currentPlayer && (
-          <HealthBar player={player} />
-        )
-      }
     </>
   );
 };

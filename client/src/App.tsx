@@ -8,6 +8,7 @@ import Controls from './components/controls/Controls';
 import HUD from './components/HUD';
 import Sounds from './util/Sounds';
 import React from 'react';
+import HealthBar from './components/HealthBar';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
                 {({ movementData }) => (
                   <Canvas style={{ width: '100vw', height: '100vh' }} shadows>
                     <CameraControls localState={localState} updatePlayer={updatePlayer} movementData={movementData} gameState={gameState} />
-                    {/* <ambientLight intensity={2} /> */}
+                    <ambientLight intensity={2} />
                     <Map mapData={gameState.map} />
                     {
                       _.map(gameState.players, (player, playerId) => {
@@ -42,6 +43,7 @@ function App() {
                       _.map(gameState.enemies, (enemy, enemyId) => {
                         return (
                           <React.Fragment key={enemyId}>
+                            <HealthBar enemy={enemy} />
                             <mesh position={[enemy.x, 0 - (0.1 / 2), enemy.z]} receiveShadow>
                               <boxGeometry args={[0.5, 2, 0.5]} />
                               <meshStandardMaterial color='#00FF00' />

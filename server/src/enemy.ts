@@ -1,4 +1,7 @@
+import { broadcastMsg } from ".";
+import { Lobby } from "./lobby";
 import { ENEMY_SPAWN, WALL } from "./map";
+import { Player } from "./player";
 
 export type Enemy = {
   x: number,
@@ -7,6 +10,7 @@ export type Enemy = {
   health: number,
   moving: boolean,
   path?: { x: number, z: number }[],
+  disableMovement?: boolean,
 }
 
 const rand = (min, max) => {
@@ -133,3 +137,85 @@ export function findPath(start: Position, target: Position, map: number[][]): Po
 
   return []; // No path found
 }
+export function onHit (player: Player, lobby: Lobby) {
+  Object.entries(lobby.gameState.enemies).forEach(([enemyId, enemy]) => {
+    const distance = Math.sqrt(
+      Math.pow(enemy.x - player.x, 2) +
+      Math.pow(enemy.z - player.z, 2)
+    );
+  
+    const angleToEnemy = Math.atan2(enemy.z - player.z, enemy.x - player.x);
+    const angleDifference = Math.abs(player.angle - angleToEnemy);
+  
+    // Normalize the angle difference to the range [0, Math.PI]
+    const normalizedAngleDifference = Math.min(angleDifference, Math.abs(Math.PI * 2 - angleDifference));
+  
+    const isWithinCube = distance <= 1.5 && normalizedAngleDifference - Math.PI / 2 <= Math.PI / 4;
+  
+    if (isWithinCube) {
+      enemy.health = Math.max(enemy.health - 34, 0);
+  
+      lobby.gameState.enemies[enemyId].disableMovement = true;
+      const knockbackStrength = 1;
+      const knockbackX = knockbackStrength * Math.cos(angleToEnemy);
+      const knockbackZ = knockbackStrength * Math.sin(angleToEnemy);
+
+      const targetX = enemy.x + knockbackX;
+      const targetZ = enemy.z + knockbackZ;
+
+      const duration = 300; // Knockback duration in ms
+      const interval = 16; // Interval between updates (approx. 60fps)
+      const steps = duration / interval;
+      let currentStep = 0;
+
+      const originalX = enemy.x;
+      const originalZ = enemy.z;
+
+      const animateKnockback = setInterval(() => {
+        currentStep += 1;
+        const t = currentStep / steps; // Normalized time [0, 1]
+
+        // Ease out function
+        const easeOutQuad = (t) => t * (2 - t);
+        const easedT = easeOutQuad(t);
+
+        // Calculate intermediate position
+        const newX = originalX + (targetX - originalX) * easedT;
+        const newZ = originalZ + (targetZ - originalZ) * easedT;
+
+        // Check for walls
+        if (!isWall(newX, enemy.z, lobby) && !isWall(enemy.x, newZ, lobby)) {
+          enemy.x = newX;
+          enemy.z = newZ;
+        } else if (!isWall(newX, enemy.z, lobby)) {
+          enemy.x = newX;
+        } else if (!isWall(enemy.x, newZ, lobby)) {
+          enemy.z = newZ;
+        }
+
+        if (currentStep >= steps) {
+          clearInterval(animateKnockback); // End the animation
+          if (lobby.gameState.enemies[enemyId]) {
+            lobby.gameState.enemies[enemyId].disableMovement = false;
+          }
+        }
+      }, interval);
+  
+      if (enemy.health <= 0) {
+        delete lobby.gameState.enemies[enemyId];
+      }
+  
+      broadcastMsg(lobby.id, {
+        type: 'DAMAGE_TAKEN',
+        data: {
+          enemyId
+        }
+      });
+    }
+  });
+}
+
+const isWall = (x: number, z: number, lobby: Lobby) => {
+  const tile = lobby.gameState.map[Math.floor(z)]?.[Math.floor(x)];
+  return tile === WALL;
+};

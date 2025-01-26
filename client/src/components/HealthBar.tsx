@@ -1,9 +1,9 @@
 import React from 'react';
 import { Mesh } from 'three';
 import { useFrame } from '@react-three/fiber';
-import { Player } from '../types';
+import { Enemy } from '../types';
 
-const HealthBar = ({ player }: { player: Player }) => {
+const HealthBar = ({ enemy }: { enemy: Enemy }) => {
   const barRef1 = React.useRef<Mesh>(null);
   const barRef2 = React.useRef<Mesh>(null);
 
@@ -18,8 +18,8 @@ const HealthBar = ({ player }: { player: Player }) => {
 
   return (
     <>
-      <mesh position={[player.x, 0.75, player.z]} ref={barRef1}>
-        <boxGeometry args={[Math.max(player.health, 0) / 100, 0.1, 0.1]} />
+      <mesh position={[enemy.x, 0.75, enemy.z]} ref={barRef1}>
+        <boxGeometry args={[Math.max(enemy.health, 0) / 100, 0.1, 0.1]} />
         <meshStandardMaterial color="green" />
       </mesh>
     </>

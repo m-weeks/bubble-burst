@@ -5,6 +5,7 @@ export type Player = {
   health: number,
   score?: number,
   moving: boolean,
+  firing?: boolean,
 }
 
 const rand = (min, max) => {

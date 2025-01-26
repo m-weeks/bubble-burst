@@ -117,17 +117,12 @@ const moveEnemies = () => {
       const mapX = Math.floor(enemy.x);
       const mapY = Math.floor(enemy.z);
 
-      // Find or update path
-      if (!enemy.path || enemy.path.length <= 1) {
-        enemy.path = findPath(
-          { x: mapY, z: mapX },                       // Enemy's position in map coordinates
-          { x: basePosition[0], z: basePosition[1] }, // Base position in map coordinates
-          lobby.gameState.map
-        ).map((step) => ({ x: step.z, z: step.x })); // Convert back to enemy's coordinate system
-      }
-
-      const path = enemy.path;
-
+      const path = findPath(
+        { x: mapY, z: mapX },                       // Enemy's position in map coordinates
+        { x: basePosition[0], z: basePosition[1] }, // Base position in map coordinates
+        lobby.gameState.map
+      ).map((step) => ({ x: step.z, z: step.x }));
+    
       if (path.length > 1) {
         const nextStep = path[1];
         const threshold = 0.05; // Slightly larger threshold for smoother corners
