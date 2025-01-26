@@ -93,10 +93,8 @@ const spawnEnemies = () => {
     }
     const numEnemies = Object.values(lobby.gameState.enemies).length;
     const maxEnemies = MAX_ENEMIES_PER_PLAYER * Object.values(lobby.gameState.players).length
-    console.log(maxEnemies)
     if (numEnemies < maxEnemies) {
       const numEnemiesToSpawn = Math.max(Math.min(Math.floor(maxEnemies - numEnemies / 4), 1), 0);
-      console.log(numEnemiesToSpawn)
       for (var i = 0; i < numEnemiesToSpawn; i++) {
         lobby.gameState.enemies[_.uniqueId('enemy_')] = initializeEnemy(lobby.gameState.map);
       }
