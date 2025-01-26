@@ -163,7 +163,7 @@ export function onHit (player: Player, lobby: Lobby) {
       const targetX = enemy.x + knockbackX;
       const targetZ = enemy.z + knockbackZ;
 
-      const duration = 300; // Knockback duration in ms
+      const duration = 500; // Knockback duration in ms
       const interval = 16; // Interval between updates (approx. 60fps)
       const steps = duration / interval;
       let currentStep = 0;
@@ -215,7 +215,23 @@ export function onHit (player: Player, lobby: Lobby) {
   });
 }
 
-const isWall = (x: number, z: number, lobby: Lobby) => {
-  const tile = lobby.gameState.map[Math.floor(z)]?.[Math.floor(x)];
-  return tile === WALL;
+const isWall = (posX: number, posZ: number, lobby: Lobby): boolean => {
+  const buffer = 0.25;
+
+  // Check the area around the camera, including the buffer
+  for (let x = Math.round(posX - buffer); x <= Math.round(posX + buffer); x++) {
+    for (let z = Math.round(posZ - buffer); z <= Math.round(posZ + buffer); z++) {
+      // Check if the grid position is within the map bounds
+      if (x < 0 || x >= lobby.gameState.map.length || z < 0 || z >= lobby.gameState.map[0].length) {
+        return true; // Collision detected (out of bounds)
+      }
+
+      // Check if the grid position is a wall / object
+      if (lobby.gameState.map[x][z]) {
+        return true; // Collision detected (wall)
+      }
+    }
+  }
+
+  return false; // No collision
 };

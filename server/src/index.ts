@@ -113,6 +113,9 @@ const moveEnemies = () => {
     ).find(Boolean) as [number, number];
 
     Object.entries(lobby.gameState.enemies).forEach(([enemyId, enemy]) => {
+      if (enemy.disableMovement) {
+        return;
+      }
       // Translate enemy's position to map coordinates
       const mapX = Math.floor(enemy.x);
       const mapY = Math.floor(enemy.z);
