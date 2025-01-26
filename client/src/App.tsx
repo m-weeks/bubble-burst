@@ -10,6 +10,7 @@ import Sounds from './util/Sounds';
 import React from 'react';
 import HealthBar from './components/HealthBar';
 import Enemy from './components/Enemy';
+import Weapon from './components/Weapon';
 
 function App() {
   return (
@@ -21,41 +22,44 @@ function App() {
               <HUD gameState={gameState} /> 
               <Controls sendMessage={sendMessage}>
                 {({ movementData }) => (
-                  <Canvas style={{ width: '100vw', height: '100vh' }} shadows>
-                    <CameraControls localState={localState} updatePlayer={updatePlayer} movementData={movementData} gameState={gameState} />
-                    <ambientLight intensity={2} />
-                    <Map mapData={gameState.map} />
-                    {
-                      _.map(gameState.players, (player, playerId) => {
-                        if (playerId === localState.clientId) {
+                  <>
+                    <Canvas style={{ width: '100vw', height: '100vh' }} shadows>
+                      <CameraControls localState={localState} updatePlayer={updatePlayer} movementData={movementData} gameState={gameState} />
+                      <ambientLight intensity={2} />
+                      <Map mapData={gameState.map} />
+                      {
+                        _.map(gameState.players, (player, playerId) => {
+                          if (playerId === localState.clientId) {
+                            return (
+                              <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
+                            );
+                          }
                           return (
-                            <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
+                            <React.Fragment key={playerId}>
+                              <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
+                              <Avatar
+                                player={playerId === localState.clientId ? localState.player : player}
+                                clientId={playerId}
+                                currentPlayer={playerId === localState.clientId}
+                                curPlayer={localState.player}
+                              />
+                            </React.Fragment>
                           );
-                        }
-                        return (
-                          <React.Fragment key={playerId}>
-                            <Sounds target={player} curPlayer={localState.player} targetId={playerId} />
-                            <Avatar
-                              player={playerId === localState.clientId ? localState.player : player}
-                              clientId={playerId}
-                              currentPlayer={playerId === localState.clientId}
-                              curPlayer={localState.player}
-                            />
-                          </React.Fragment>
-                        );
-                      })
-                    }
-                    {
-                      _.map(gameState.enemies, (enemy, enemyId) => {
-                        return (
-                          <>
-                            <Sounds target={enemy} curPlayer={localState.player} targetId={enemyId} />
-                            <Enemy enemy={enemy} enemyId={enemyId} curPlayer={localState.player} key={enemyId} />
-                          </>
-                        );
-                      })
-                    }
-                  </Canvas>
+                        })
+                      }
+                      {
+                        _.map(gameState.enemies, (enemy, enemyId) => {
+                          return (
+                            <>
+                              <Sounds target={enemy} curPlayer={localState.player} targetId={enemyId} />
+                              <Enemy enemy={enemy} enemyId={enemyId} curPlayer={localState.player} key={enemyId} />
+                            </>
+                          );
+                        })
+                      }
+                    </Canvas>
+                    <Weapon curClientId={localState.clientId} />
+                  </>
                 )}
               </Controls>
             </>
