@@ -29,7 +29,7 @@ const createLobby = (): Lobby => {
       players: {},
       enemies: {},
       started: false,
-      map: getMap(),
+      map: getMap(0),
       score: 10000000,
     }
   };
@@ -55,6 +55,9 @@ export const addToLobby = (clientId: string, player?: Partial<Player>) => {
 
   console.log('PLAYER JOINED', clientId)
   console.log('NUM PLAYERS', Object.keys(lobby.gameState.players).length);
+
+  // Change map if needed
+  lobby.gameState.map = getMap( Object.keys(lobby.gameState.players).length)
 
   return lobby;
 }
