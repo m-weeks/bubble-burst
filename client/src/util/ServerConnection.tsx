@@ -2,8 +2,14 @@ import { useEffect, useState, useRef, useCallback, ReactNode } from 'react'
 import _ from 'lodash';
 import { GameData, GameState, LocalState, Player } from '../types';
 import Ellipsis from '../components/Ellipsis';
+import cashSound from '../components/assets/audio/cash.wav';
 
 export default ({ children }: { children: (gameData: GameData) => ReactNode }) => {
+  const cashAudioRef = useRef<HTMLAudioElement>()
+  useEffect(() => {
+    cashAudioRef.current = new Audio(cashSound);
+  }, [])
+
   // Stores the main game state, including all players
   const [gameState, setGameState] = useState<GameState>({
     players: {},
@@ -92,6 +98,8 @@ export default ({ children }: { children: (gameData: GameData) => ReactNode }) =
         window.dispatchEvent(new CustomEvent('fire', { detail: { clientId: msg.data.clientId } }));
       } else if (msg.type === 'DAMAGE_TAKEN') {
         window.dispatchEvent(new CustomEvent('damageTaken', { detail: { enemyId: msg.data.enemyId } }));
+      } else if (msg.type === 'SCORE_LOST') {
+        cashAudioRef.current?.play();
       }
     }
   
