@@ -119,7 +119,7 @@ export const fire = (clientId) => {
   player.firing = true;
   setTimeout(() => {
     lobby.gameState.players[clientId].firing = false;
-  }, 1000);
+  }, 500);
 
   onHit(player, lobby);
 
