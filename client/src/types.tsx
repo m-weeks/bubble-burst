@@ -13,6 +13,7 @@ export type Enemy = {
   angle: number,
   health: number,
   moving: boolean,
+  speed: number,
 }
 
 export type GameState = {

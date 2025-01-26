@@ -1,4 +1,5 @@
 import { broadcastMsg } from ".";
+import { ENEMY_SPEED } from "./constants";
 import { Lobby } from "./lobby";
 import { ENEMY_SPAWN, WALL } from "./map";
 import { Player } from "./player";
@@ -11,6 +12,7 @@ export type Enemy = {
   moving: boolean,
   path?: { x: number, z: number }[],
   disableMovement?: boolean,
+  speed: number
 }
 
 const rand = (min, max) => {
@@ -41,6 +43,7 @@ export const initializeEnemy = (map: number[][]): Enemy => {
     angle: Math.PI,
     health: 100,
     moving: false,
+    speed: ENEMY_SPEED * (1 + (Math.random() * 1 - 0.5))
   };
 }
 

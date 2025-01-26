@@ -88,19 +88,25 @@ let enemyIdCounter = 0;
 
 const spawnEnemies = () => {
   Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
-    if (!lobby.gameState.score) {
+    if (!lobby.gameState.score || !lobby.gameState.started) {
       return;
     }
     const numEnemies = Object.values(lobby.gameState.enemies).length;
-    if (numEnemies < MAX_ENEMIES_PER_PLAYER * Object.values(lobby.gameState.players).length) {
-      lobby.gameState.enemies[_.uniqueId('enemy_')] = initializeEnemy(lobby.gameState.map);
+    const maxEnemies = MAX_ENEMIES_PER_PLAYER * Object.values(lobby.gameState.players).length
+    console.log(maxEnemies)
+    if (numEnemies < maxEnemies) {
+      const numEnemiesToSpawn = Math.max(Math.min(Math.floor(maxEnemies - numEnemies / 4), 1), 0);
+      console.log(numEnemiesToSpawn)
+      for (var i = 0; i < numEnemiesToSpawn; i++) {
+        lobby.gameState.enemies[_.uniqueId('enemy_')] = initializeEnemy(lobby.gameState.map);
+      }
     }
   })
 }
 
 setInterval(() => {
   spawnEnemies();
-}, 5000)
+}, 3000)
 
 const moveEnemies = () => {
   Object.entries(lobbies).forEach(([lobbyId, lobby]) => {
@@ -144,7 +150,7 @@ const moveEnemies = () => {
           path.shift(); // Remove the reached step
         } else {
           // Smoothly move toward the next step
-          const movementScale = ENEMY_SPEED / distance; // Normalize and scale the movement
+          const movementScale = enemy.speed / distance; // Normalize and scale the movement
           enemy.x += dx * movementScale;
           enemy.z += dz * movementScale;
 
